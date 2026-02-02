@@ -40,7 +40,7 @@
 #define	kRETAddr  9
 #define	kRSP     13
 
-extern "C" void coctx_make(coctx_t* ctx, void*(*pfn)(void*), const void* arg)
+void coctx_make(struct coctx_t* ctx, void*(*pfn)(void*), const void* arg)
 {
 	unsigned char* sp = ctx->sp + ctx->size - sizeof(unsigned char*);
 	sp = (unsigned char*)((unsigned long)sp & -16LL);

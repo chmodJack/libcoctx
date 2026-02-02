@@ -1,11 +1,9 @@
-#include<iostream>
+#include<stdio.h>
 #include<unistd.h>
 
 #include"coctx.h"
 
-using namespace std;
-
-coctx_t ctx[3];
+struct coctx_t ctx[3];
 
 unsigned char s[3][40960];
 

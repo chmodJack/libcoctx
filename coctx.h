@@ -8,7 +8,7 @@ struct coctx_t
 	unsigned long  size;
 };
 
-extern "C" void coctx_make(coctx_t* ctx, void*(*pfn)(void*),const void* arg);
-extern "C" void coctx_swap(coctx_t* ctx_0, coctx_t* ctx_1) asm("coctx_swap");
+void coctx_make(struct coctx_t* ctx, void*(*pfn)(void*),const void* arg);
+void coctx_swap(struct coctx_t* ctx_0, struct coctx_t* ctx_1) asm("coctx_swap");
 
 #endif
