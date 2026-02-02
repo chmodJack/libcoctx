@@ -6,7 +6,7 @@ coctx_swap:
     movq %rcx, 88(%rdi)
 	movq %rdx, 80(%rdi)
 	movq 0(%rax), %rax
-	movq %rax, 72(%rdi) 
+	movq %rax, 72(%rdi)
 	movq %rsi, 64(%rdi)
 	movq %rdi, 56(%rdi)
     movq %rbp, 48(%rdi)
