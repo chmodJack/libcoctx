@@ -14,6 +14,7 @@ void* func_0(void* arg)
 	{
 		sleep(1);
 		printf("%s: %d\n",__func__,i++);
+		fflush(stdout);
 		coctx_swap(ctx + 0, ctx + 1);
 	}
 }
@@ -25,12 +26,16 @@ void* func_1(void* arg)
 	{
 		sleep(1);
 		printf("%s: %d\n",__func__,i++);
+		fflush(stdout);
 		coctx_swap(ctx + 1, ctx + 2);
 	}
 }
 
 int main(int argc,char* argv[])
 {
+	coctx_init(ctx + 0);
+	coctx_init(ctx + 1);
+
 	ctx[0].sp = s[0];
 	ctx[0].size = 40960;
 
@@ -47,10 +52,10 @@ int main(int argc,char* argv[])
 	while(1)
 	{
 		sleep(1);
-		printf("%s: %d\n",__func__,i++);
+		printf("main: %d\n",i++);
+		fflush(stdout);
 		coctx_swap(ctx + 2, ctx + 0);
 	}
 
     return 0;
 }
-
