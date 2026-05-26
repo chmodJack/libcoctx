@@ -3,12 +3,12 @@
 
 struct coctx_t
 {
-	unsigned char* regs[14];
-	unsigned char* sp;
-	unsigned long  size;
+	void* regs[8];   // rbx, rbp, r12, r13, r14, r15, rdi, rsp
+	void* sp;
+	unsigned long size;
 };
 
-void coctx_make(struct coctx_t* ctx, void*(*pfn)(void*),const void* arg);
+void coctx_make(struct coctx_t* ctx, void*(*pfn)(void*), void* arg);
 void coctx_swap(struct coctx_t* ctx_0, struct coctx_t* ctx_1) asm("coctx_swap");
 
 #endif
