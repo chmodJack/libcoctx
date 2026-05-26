@@ -1,5 +1,5 @@
-.globl coctx_swap
-coctx_swap:
+.globl coctx_switch
+coctx_switch:
 	movq %rbx,  0(%rdi)
 	movq %rbp,  8(%rdi)
 	movq %r12, 16(%rdi)

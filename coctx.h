@@ -8,7 +8,12 @@ struct coctx_t
 	unsigned long size;
 };
 
-void coctx_make(struct coctx_t* ctx, void*(*pfn)(void*), void* arg);
-void coctx_swap(struct coctx_t* ctx_0, struct coctx_t* ctx_1) asm("coctx_swap");
+// Register a coroutine into the round-robin scheduler.
+// Pass pfn == NULL for the currently-running context (e.g. main),
+// which only reserves a slot to save its registers into.
+void coctx_add(struct coctx_t* ctx, void*(*pfn)(void*), void* arg);
+
+// Yield to the next coroutine in registration order.
+void coctx_swap(void);
 
 #endif
