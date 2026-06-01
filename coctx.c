@@ -1,36 +1,43 @@
 #include "coctx.h"
 
-// regs layout:
-//   [0] rbx  [1] rbp  [2] r12  [3] r13
-//   [4] r14  [5] r15  [6] rdi  [7] rsp
-
-extern void coctx_switch(struct coctx_t* from, struct coctx_t* to) asm("coctx_switch");
-
-#define COCTX_MAX 16
-static struct coctx_t* g_co[COCTX_MAX];
-static int g_n = 0;
-static int g_cur = 0;
-
-static void coctx_make(struct coctx_t* ctx, void*(*pfn)(void*), void* arg)
+__attribute__((naked))
+void coctx_switch(struct coctx_t* from, struct coctx_t* to)
 {
-	unsigned long* sp = (unsigned long*)
-		(((unsigned long)ctx->sp + ctx->size) & ~0xFUL);
-	*--sp = (unsigned long)pfn;   // ret in coctx_switch pops this as return addr
+	__asm__ volatile(
+		"movq %rbx,  0(%rdi)\n\t"
+		"movq %rbp,  8(%rdi)\n\t"
+		"movq %r12, 16(%rdi)\n\t"
+		"movq %r13, 24(%rdi)\n\t"
+		"movq %r14, 32(%rdi)\n\t"
+		"movq %r15, 40(%rdi)\n\t"
+		"movq %rdi, 48(%rdi)\n\t"
+		"movq %rsp, 56(%rdi)\n\t"
 
-	ctx->regs[6] = arg;
+		"movq  0(%rsi), %rbx\n\t"
+		"movq  8(%rsi), %rbp\n\t"
+		"movq 16(%rsi), %r12\n\t"
+		"movq 24(%rsi), %r13\n\t"
+		"movq 32(%rsi), %r14\n\t"
+		"movq 40(%rsi), %r15\n\t"
+		"movq 56(%rsi), %rsp\n\t"
+		"movq 48(%rsi), %rdi\n\t"
+		"ret\n\t"
+	);
+}
+
+struct coctx_t global_ctx[COCTX_MAX];
+
+void coctx_make(int index, void(*pfn)(void))
+{
+	struct coctx_t* ctx = global_ctx + index;
+	unsigned long* sp = (unsigned long*)
+		(((unsigned long)ctx->stack + COCTX_STACK_SIZE) & ~0xFUL);
+	*--sp = (unsigned long)pfn;
+
 	ctx->regs[7] = sp;
 }
 
-void coctx_add(struct coctx_t* ctx, void*(*pfn)(void*), void* arg)
+void coctx_swap(int from, int to)
 {
-	if (pfn) coctx_make(ctx, pfn, arg);
-	g_co[g_n++] = ctx;
-}
-
-void coctx_swap(void)
-{
-	int from = g_cur;
-	int to = (g_cur + 1) % g_n;
-	g_cur = to;
-	coctx_switch(g_co[from], g_co[to]);
+	coctx_switch(global_ctx + from, global_ctx + to);
 }
