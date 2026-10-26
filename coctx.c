@@ -34,6 +34,8 @@ void coctx_make(int index, void(*pfn)(void))
 	struct coctx_t* ctx = global_ctx + index;
 	unsigned long* sp = (unsigned long*)
 		(((unsigned long)ctx->stack + COCTX_STACK_SIZE) & ~0xFUL);
+	/* ret consumes pfn; reserve a return slot so pfn enters with rsp % 16 == 8. */
+	*--sp = 0;
 	*--sp = (unsigned long)pfn;
 
 	ctx->regs[7] = sp;
