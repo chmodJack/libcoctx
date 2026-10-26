@@ -9,7 +9,7 @@ void func_0(void)
 	while(1)
 	{
 		printf("%s: %d\n",__func__,i++);
-		coctx_swap(0, 1);
+		coctx_swap(1, 2);
 	}
 }
 
@@ -19,22 +19,23 @@ void func_1(void)
 	while(1)
 	{
 		printf("%s: %d\n",__func__,i++);
-		coctx_swap(1, 2);
+		coctx_swap(2, 0);
 	}
 }
 
 int main(int argc,char* argv[])
 {
-	coctx_make(0, func_0);
-	coctx_make(1, func_1);
-	coctx_make(2, NULL  );
+	// 0 reserved for main func
+	//coctx_make(0, NULL  );
+	coctx_make(1, func_0);
+	coctx_make(2, func_1);
 
 	int i=0;
 	while(1)
 	{
 		//sleep(1);
 		printf("%s: %d\n",__func__,i++);
-		coctx_swap(2, 0);
+		coctx_swap(0, 1);
 	}
 
 	return 0;
